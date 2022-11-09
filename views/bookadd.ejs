@@ -1,0 +1,37 @@
+<%- include('partials/header'); -%>
+<form>
+    <h2>Sign up</h2>
+    <label for="name">Name</label>
+    <input type="text" name="name" required/>
+    <label for="Author">Author</label>
+    <input type="text" name="Author" required/>
+    <label for="Desc">Description</label>
+    <input type="text" name="Desc" required/>
+    <label for="image">image</label>
+    <input type="image" name="image" required/>
+    <button>Add Book</button>
+</form>
+<script>
+    const form=document.querySelector('form');
+    form.addEventListener('submit',async(e)=>{
+        e.preventDefault();
+    const name=form.name.value;
+    const author= form.Author.value;
+    const Desc= form.Desc.value;
+    const image= form.Author.value;
+        e.preventDefault();
+        try {
+            const result = await fetch('/bookadd',{
+                method:'POST',
+                body:JSON.stringify({name,  author, Desc,image}),
+                headers:{'Content-Type':'application/json'}
+            });
+            console.log(result);
+            const data=await result.json();
+            console.log(data);
+        } catch (error) {
+            console.log(error)
+        }
+    })
+    </script>
+<%- include('partials/footer'); -%>
