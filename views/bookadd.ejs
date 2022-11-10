@@ -1,6 +1,6 @@
 <%- include('partials/header'); -%>
 <form>
-    <h2>Sign up</h2>
+    <h2>ADD Book</h2>
     <label for="name">Name</label>
     <input type="text" name="name" required/>
     <label for="Author">Author</label>
@@ -8,29 +8,36 @@
     <label for="Desc">Description</label>
     <input type="text" name="Desc" required/>
     <label for="image">image</label>
-    <input type="image" name="image" required/>
+    <input type="file"  name ="image" multiple="multiple" accept="image/*" />
+    <div class="error"></div>
+
     <button>Add Book</button>
 </form>
 <script>
     const form=document.querySelector('form');
     form.addEventListener('submit',async(e)=>{
-        e.preventDefault();
+    e.preventDefault();
     const name=form.name.value;
     const author= form.Author.value;
-    const Desc= form.Desc.value;
+    const desc= form.Desc.value;
     const image= form.Author.value;
+   const erroe= document.querySelector('.error');
+    // var image = new Buffer(images, 'base64')
         e.preventDefault();
         try {
             const result = await fetch('/bookadd',{
                 method:'POST',
-                body:JSON.stringify({name,  author, Desc,image}),
+                body:JSON.stringify({name,  author, desc,image}),
                 headers:{'Content-Type':'application/json'}
             });
-            console.log(result);
             const data=await result.json();
-            console.log(data);
+            if(data)
+            {
+                erroe.textContent="Done";
+                location.assign('/adminBookview');
+            }
         } catch (error) {
-            console.log(error)
+            erroe.textContent="Not ";
         }
     })
     </script>

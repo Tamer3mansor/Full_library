@@ -1,9 +1,13 @@
 <%- include('partials/header'); -%>
+<nav><ui><li><a href="/bookadd" class="btn">AddBook</a></li>
+  <li><a href="/bookRemove" class="btn">RemoveBook</a></li></ui></nav>
 
 <ul class="recipes">
   <% for(var i=0; i < data.length; i++) { %>
     <li class="recipe">
-      <img src="/liprary.jpg" alt="Book icon">
+      <img src="" alt="Book icon">
+      <h4><%=data[i].image%></h4>
+      <h4>id:<%=data[i]._id%></h4>
       <h4>name:<%=data[i].name%></h4>
       <h4>author:<%=data[i].author%></h4>
       <h4>Desc<%=data[i].desc%></h4>

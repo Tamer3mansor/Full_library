@@ -1,0 +1,38 @@
+<%- include('partials/header'); -%>
+<form>
+    <h2>Remove Book</h2>
+    <label for="id">id</label>
+    <input type="text" name="id" required/>
+    <label for="name">name</label>
+    <input type="text" name="name" required/>
+    <div class="error"></div>
+
+    <button>Remove Book</button>
+</form>
+<script>
+    const form=document.querySelector('form');
+    form.addEventListener('submit',async(e)=>{
+        e.preventDefault();
+    const id=form.id.value;
+    const name= form.name.value;
+    const erroe= document.querySelector('.error');
+        e.preventDefault();
+        try {
+            const result = await fetch('/bookRemove',{
+                method:'DELETE',
+                body:JSON.stringify({id, name}),
+                headers:{'Content-Type':'application/json'}
+            });
+            // console.log(id , name , result);
+            const data=await result.json();
+            if(data)
+            {
+                erroe.textContent="Done";
+                location.assign('/adminBookview');
+            }
+        } catch (error) {
+            erroe.textContent="NO Book with this Id ";
+        }
+    })
+    </script>
+<%- include('partials/footer'); -%>

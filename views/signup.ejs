@@ -16,7 +16,7 @@
     form.addEventListener('submit',async (e)=>{
         e.preventDefault();
         emailerror.textContent="";
-            passworderror.textContent="";
+        passworderror.textContent="";
     const email=form.email.value;
     const password= form.password.value;
     try {
@@ -27,18 +27,18 @@
         });
         const data=await res.json();
         console.log(data);
-        if(data.customerror){
-            emailerror.textContent=data.customerror.email;
-            passworderror.textContent=data.customerror.password;
-        }
-        if(data.user){
-            location.assign('/books');
-        }
+        location.assign('/books');
+    if(data.errors){
+        emailerror.textContent=data.errors.email;
+        passworderror.textContent="error";
+    }
+    
+       
+    
     } 
     catch (error) {
-        console.log("thiserror" + error);
-    }
-    })
+        console.log(error)
+    }})
     </script>
     
 <%- include('partials/footer'); -%>

@@ -12,8 +12,9 @@ const requireAuth =  (req, res, next) => {
         let user = await usermodel.findById(mytoken.id);
         let mail = user.email;
         console.log(user.email);
-        if (mail == "tamermansor371@gmail.com") {
-          res.redirect("/bookadd");
+        if (req.path!='/admin'&&mail == "tamermansor371@gmail.com") {
+          // if()
+          res.redirect("/admin");
           res.locals.user = user;
         }
         next();

@@ -10,11 +10,14 @@ const bookSchema = mongoose.Schema({
           type:String,
         require:[true]
     },
-    description:{
+    desc:{
         type:String,
         require:[false]
     },
-    imge:{
+    imge:
+    {
+        data: Buffer,
+        contentType: String
     }
 })
 const books = mongoose.model('books',bookSchema);

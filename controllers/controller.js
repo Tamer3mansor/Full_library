@@ -1,29 +1,30 @@
 const users=require('../modouls/userModel')
 const books = require('../modouls/booksModel')
 const jwt=require('jsonwebtoken');
-const errorHandel=(err)=>{
-let error = {email:'',password:''};
-if(err.message=='Incorrect email')
-{
-    error.email='this email is not registed';
-
-}
-if(err.message=='incorrect password')
-{
-  error.password='this password is incorrect';
-}
+const handelerErrors = (err) =>{
+    // console.log(err.message ,err.code);
+    let error = {email:'',password:''};
+    //handel error code
+    if(err.message=='incorrect email')
+    {
+      error.email='this email is not registed';
+    }
+    if(err.message=='incorrect password')
+    {
+      error.password='this password is incorrect';
+    }
 if (err.code==11000)
 {
-error.email='email already registerd'
-return error;
+    error.email='email already registerd'
+    return error;
 }
-if(err.message.includes('user validation failed')){
-    Object.values(err.errors).forEach(({properties}) => {
-      error[properties.path] = properties.message;
-    });
-   // console.log(Object.values(err.errors));
-   }
-   return error;
+    if(err.message.includes('user validation failed')){
+     Object.values(err.errors).forEach(({properties}) => {
+       error[properties.path] = properties.message;
+     });
+    // console.log(Object.values(err.errors));
+    }
+    return error;
 }
 
 const creatToken = (id)=>{
@@ -41,36 +42,35 @@ login_post = async(req,res)=>{
     res.cookie('jwt',token,{httpOnly:true , maxAge:3*24*60*60*1000});
     res.status(201).json({user:local_user._id});
     } catch (error) {
-        const customerror = errorHandel(error);
+        const customerror = handelerErrors(error);
         res.status(400).json({customerror});
     }
 
 }
-signup_post = async(req,res)=>{
+signup_post = async (req,res)=>{
     const { email , password} = req.body;
     try {
-    const local_user = await users.create({email , password}); // it a sync return promise
-    const token=creatToken(User._id);
-     res.cookie('jwt',token,{httpOnly:true , maxAge:3*24*60*60*1000})    
-     res.status(201).json({user:local_user._id});
-    } catch (error) {
-   
-        const customerror = errorHandel(error);
-        res.status(400).json({customerror});
+     const User = await users.create({email , password}); // it a sync return promise
+     const token = creattoken(User._id);
+     res.cookie('jwt',token,{httpOnly:true, maxAge:3*24*60*60*1000  })
+     res.status(201).json({user:User._id});
+    } catch (err) {
+    const errors =handelerErrors(err);
+    res.status(400).json({errors});
     }
-    
 }
 logout_get = (req,res)=>{
-
+res.cookie('jwt'," ",{maxAge:1});
+res.redirect('/');
 }
 addbook_get = (req,res)=>{
  res.render('bookadd')
 }
 addBook_post = async(req,res)=>{
-    const { author , name , description , imge} = req.body;
+    const { author , name , desc , image} = req.body;
     console.log(req.body);
     try {
-    const book = await books.create({ author , name , description , imge}); 
+    const book = await books.create({ author , name , desc , image}); 
      res.status(201).json({book});
     } catch (err) {
    
@@ -80,17 +80,39 @@ addBook_post = async(req,res)=>{
 getALL_books =async(req,res)=>{
     try {
         const allBooks = await books.find({});
-        // console.log(allBooks.name);
+        // console.log(allBooks[3].desc);
         res.render('books', {data : allBooks});
+        // res.status(201).json(allBooks);
+    } catch (error) {
+        // res.status(400).json(error)
+    }
+    
+}
+getAdmin_books =async(req,res)=>{
+    try {
+        const allBooks = await books.find({});
+        // console.log(allBooks.name);
+        res.render('adminBookview', {data : allBooks});
         // res.status(201).json(allBooks);
     } catch (error) {
         res.status(400).json(error)
     }
     
 }
-book_delete= (req,res)=>{
-
+book_delete=async (req,res)=>{
+    console.log(req.params);
+    try{
+        const ide  = req.params.id
+        const book = await books.findOneAndDelete({ ide })
+        if (!book) {
+          return res.status(404).json({msg:`No task with id:${ide}`})
+        }
+        res.status(200).json({ book })
+      } catch(error)
+      {
+      res.status(500).json( req.body.id)
+      }
 }
 module.exports = {
-    signup_get,signup_post , login_get , login_post ,logout_get,addbook_get,addBook_post,book_delete,getALL_books
+    signup_get,signup_post ,getAdmin_books, login_get , login_post ,logout_get,addbook_get,addBook_post,book_delete,getALL_books
 }
